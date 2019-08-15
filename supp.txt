@@ -1,1 +1,0 @@
-network={ ssid="Unifi" priority=1 proto=RSN key_mgmt=WPA-EAP pairwise=CCMP auth_alg=OPEN eap=PEAP
