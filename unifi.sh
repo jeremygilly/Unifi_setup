@@ -4,6 +4,9 @@
 # For more information, please visit: https://www.raspberrypi.org/forums/viewtopic.php?f=36&t=111100&p=1272692#p1272692
 # For example files, please visit: https://github.com/jeremygilly/Unifi_setup
 
+printf "This program will overwrite your /etc/dhcpcd.conf file. In most cases, this is fine."
+printf "However, just in case, this program will copy your file to /etc/dhcpcd_old.conf so you'll still have it."
+printf "Quit the program now (Ctrl+c) if you don't want this to happen and update the files manually.\n"
 
 read -p "UWA ID number: " UWAID
 read -s -p "UWA Password: " UWAPASSWORD
@@ -24,27 +27,9 @@ else
 	sudo sed -i "$ a $supp_txt" $wpa_supplicant_location
 fi
 
-interfaces_location='/etc/network/interfaces'	
-if grep -Fxqrn $interfaces_location -e 'allow-hotplug wlan0'
-then 
-	:
-else
-	sudo sed -i "$ a allow-hotplug wlan0" $interfaces_location
-fi
-
-if grep -Fxqrn $interfaces_location -e 'iface wlan0 inet dhcp'
-then
-	:
-else
-	sudo sed -i "$ a iface wlan0 inet dhcp" $interfaces_location
-fi
-
-if grep -Fxqrn $interfaces_location -e '	wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf'
-then
-	:
-else
-	sudo sed -i "$ a 	wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf" $interfaces_location
-fi
+dir=$(dirname $(readlink -f $0))
+sudo mv /etc/dhcpcd.conf /etc/dhcpcd_old.conf
+sudo cp $dir/dhcpcd.conf /etc/dhcpcd.conf
 
 printf "Restarting networking service.\n"
 sudo service networking restart
